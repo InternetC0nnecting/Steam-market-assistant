@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://community.fastly.steamstatic.com https://community.akamai.steamstatic.com https://community.cloudflare.steamstatic.com https://cdn.cloudflare.steamstatic.com; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="dark">
+  <title>Steam 市场助手</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#inventory" aria-label="Steam 市场助手首页">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M7 21.5 14 9l4 7.5 7-6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="21.5" r="3" fill="currentColor"/><circle cx="25" cy="10.5" r="3" fill="currentColor"/></svg></span>
+        <span class="brand-copy">市场助手<small>STEAM MARKET</small></span>
+      </a>
+      <div class="sidebar-label">工作空间</div>
+      <nav class="navigation" aria-label="主导航">
+        <button class="nav-item active" data-view="inventory" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 8.5 5v9L12 22l-8.5-5V8L12 3Z"/><path d="m3.5 8 8.5 5 8.5-5M12 13v9M8 5.4l8.5 5"/></svg><span>库存上架</span><span class="nav-count" id="inventory-nav-count">—</span></button>
+        <button class="nav-item" data-view="listings" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h16v12H4V9ZM3 9l2-6h14l2 6M9 21v-8h6v8M3 9h18"/></svg><span>在售下架</span><span class="nav-count" id="listings-nav-count">—</span></button>
+        <button class="nav-item" data-view="tasks" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5H5v16h14V5h-4M9 3h6v4H9V3ZM8 12h8M8 16h5"/></svg><span>执行记录</span><span class="nav-count" id="tasks-nav-count">0</span></button>
+      </nav>
+      <div class="sidebar-tip"><span class="tip-dot"></span><div><strong>每一步，都看得清</strong><p>先选物品，再核对预览。<br>操作进度随时可查。</p></div></div>
+      <div class="sidebar-bottom">
+        <button class="external-link" id="open-market" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h6v6m0-6L10 14M10 4H4v16h16v-6"/></svg>打开 Steam 市场<svg class="link-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+        <button class="external-link" id="open-inventory" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4H4v16h16v-4M14 4h6v6m0-6L10 14"/></svg>打开我的 Steam 库存</button>
+        <div class="account-box"><div class="account-avatar" id="account-avatar">S</div><div class="account-copy"><strong id="account-name">尚未登录</strong><span id="account-detail">连接你的 Steam 账户</span></div><span class="account-dot" id="account-dot"></span></div>
+        <button class="account-action" id="account-action" type="button">登录 Steam <span aria-hidden="true">↗</span></button>
+        <div class="sidebar-footer"><span>本机桌面应用 · v1.0.3</span><button id="help-button" type="button">使用帮助</button></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div><div class="eyebrow"><span></span>你的市场工作台</div><h1 id="page-title">库存上架</h1><p id="page-subtitle">选好物品、设置价格，一次完成批量上架。</p></div>
+        <div class="header-actions"><div class="environment-status" id="connection-status"><span></span>未连接 Steam</div><button class="button button-quiet" id="demo-toggle" type="button">体验演示</button></div>
+      </header>
+      <div class="demo-banner hidden" id="demo-banner" role="status"><div><span class="demo-pill">演示模式</span><span>当前是示例库存，所有操作仅在演示中生效。</span></div><button id="leave-demo" type="button">返回真实账户 <span aria-hidden="true">↗</span></button></div>
+      <div class="notice-banner hidden" id="wallet-notice" role="status"></div>
+
+      <section class="stat-grid" aria-label="工作台概况">
+        <article class="stat-card"><div class="stat-label">已加载库存<span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 8 5v9l-8 5-8-5V8l8-5Zm-8 5 8 5 8-5m-8 5v9"/></svg></span></div><div class="stat-value" id="stat-inventory">—<span>项</span></div><div class="stat-caption" id="stat-inventory-caption">加载库存后显示</div></article>
+        <article class="stat-card"><div class="stat-label">当前在售<span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h16v12H4V9ZM3 9l2-6h14l2 6M9 21v-8h6v8"/></svg></span></div><div class="stat-value" id="stat-listings">—<span>单</span></div><div class="stat-caption" id="stat-listings-caption">加载在售列表后显示</div></article>
+        <article class="stat-card stat-accent"><div class="stat-label">本次已选择<span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span></div><div class="stat-value" id="stat-selected">0<span>项</span></div><div class="stat-caption" id="stat-selected-caption">从列表中勾选要操作的物品</div></article>
+      </section>
+
+      <section class="workspace-panel" id="workspace-panel">
+        <div class="panel-heading"><div><h2 id="panel-title">我的库存</h2><span class="count-label" id="result-count">尚未加载</span></div><div class="wallet-chip" id="wallet-chip"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 8V5H4v15h16V8ZM4 5V3h13v2M20 10h-6v5h6M17 12.5h.1"/></svg><span>账户币种自动识别</span></div></div>
+        <div class="filter-bar" id="filter-bar">
+          <div class="game-select-wrap" id="game-select-wrap"><label class="sr-only" for="game-select">选择游戏</label><select id="game-select"><option value="730:2">Counter-Strike 2</option><option value="570:2">Dota 2</option><option value="440:2">Team Fortress 2</option><option value="753:6">Steam 社区</option><option value="custom">其他游戏…</option></select><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></div>
+          <div class="custom-game hidden" id="custom-game"><label><span>App ID</span><input id="custom-appid" inputmode="numeric" placeholder="730" aria-label="自定义 App ID"></label><label><span>Context</span><input id="custom-contextid" inputmode="numeric" placeholder="2" aria-label="自定义 Context ID"></label></div>
+          <label class="search-field"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="search-input" type="search" placeholder="搜索物品名称…" autocomplete="off"><span class="search-key">搜索</span></label>
+          <button class="button button-secondary" id="refresh-button" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 10a8 8 0 0 0-14-5L3 8m0-5v5h5m-4 6a8 8 0 0 0 14 5l3-3m0 5v-5h-5"/></svg><span>加载库存</span></button>
+        </div>
+        <div class="pricing-bar" id="pricing-bar"><div class="pricing-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18m5-14H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><strong>批量定价</strong><span>每件卖家到手价</span></div><div class="pricing-controls"><div class="money-input"><span id="bulk-currency">—</span><input id="bulk-price" type="text" inputmode="decimal" placeholder="0.00" aria-label="批量每件卖家到手价"></div><button class="button button-secondary button-small" id="apply-price" type="button">应用到所选</button></div></div>
+        <div class="table-container" id="table-container"><table class="items-table"><thead id="table-head"></thead><tbody id="table-body"></tbody></table><div id="empty-state" class="empty-state"></div><div id="loading-state" class="loading-state hidden" role="status"><span class="spinner"></span><strong>正在读取 Steam 数据</strong><span>物品较多时可能需要一点时间</span></div></div>
+        <div class="selection-footer" id="selection-footer"><div class="selection-summary"><span class="selected-symbol"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><div><strong id="selection-label">已选择 0 项物品</strong><span id="selection-hint">价格与数量将在执行前再次核对</span></div><button class="text-button hidden" id="clear-selection" type="button">清空选择</button></div><div class="selection-total"><div><span id="total-label">预计到手合计</span><strong id="total-value">—</strong></div><button class="button button-primary" id="preview-button" type="button" disabled><span>预览上架</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button></div></div>
+      </section>
+
+      <section class="task-panel hidden" id="task-panel">
+        <div class="panel-heading"><div><h2>执行记录</h2><span class="count-label" id="task-state-label">暂无任务</span></div><div class="task-actions"><button class="button button-secondary button-small" id="export-log" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>导出记录</button><button class="button button-danger button-small hidden" id="stop-button" type="button">停止后续操作</button></div></div>
+        <div class="task-progress-area hidden" id="task-progress-area"><div class="progress-head"><strong id="task-progress-title">准备执行</strong><span id="task-progress-count">0 / 0</span></div><div class="progress-track"><div id="task-progress-bar"></div></div><div class="task-result-summary" id="task-result-summary"></div></div>
+        <div class="table-container task-table-container"><table class="items-table task-table"><thead id="task-table-head"><tr><th>物品</th><th>操作</th><th>数量</th><th>每件到手价</th><th>状态</th></tr></thead><tbody id="task-table-body"></tbody></table><div class="empty-state" id="task-empty-state"></div></div>
+      </section>
+      <footer class="main-footer"><span><span class="footer-dot"></span>价格以账户钱包币种显示 · Steam 手续费在预览中计算</span><button id="agreement-button" type="button">Steam 订户协议 <span aria-hidden="true">↗</span></button></footer>
+    </main>
+  </div>
+
+  <div class="modal-overlay hidden" id="preview-overlay" role="presentation"><section class="preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-title" aria-describedby="preview-description" tabindex="-1"><div class="modal-header"><div class="modal-heading-icon" id="preview-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20V4M6 10l6-6 6 6M4 16v5h16v-5"/></svg></div><div><div class="eyebrow" id="preview-eyebrow">最后核对</div><h2 id="preview-title">确认批量上架</h2></div><button class="icon-button" id="close-preview" type="button" aria-label="关闭预览"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div><div class="preview-demo-badge hidden" id="preview-demo-badge">演示操作 · 不影响真实 Steam 市场</div><p class="preview-description" id="preview-description"></p><div class="preview-table-wrap"><table class="items-table preview-table"><thead id="preview-table-head"></thead><tbody id="preview-table-body"></tbody></table></div><div class="preview-totals" id="preview-totals"></div><div class="preview-note" id="preview-note"></div><label class="confirmation-check"><input type="checkbox" id="confirm-checkbox"><span>我已核对全部物品、数量与价格，确认执行这次批量操作。</span></label><div class="modal-footer"><button class="button button-secondary" id="cancel-preview" type="button">返回修改</button><button class="button button-primary" id="confirm-execute" type="button" disabled>确认批量上架</button></div></section></div>
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+</body>
+</html>
